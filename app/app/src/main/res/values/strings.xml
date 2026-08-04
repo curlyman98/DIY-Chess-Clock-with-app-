@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Chess_Clock_App</string>
+    <string name="welcome_text">Welcome\nto the Chess Clock App!</string>
+    <string name="menu">Menu</string>
+    <string name="stored_games">Stored Games</string>
+    <string name="settings">Settings</string>
 </resources>
