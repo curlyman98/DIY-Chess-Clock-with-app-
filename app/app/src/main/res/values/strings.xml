@@ -4,4 +4,5 @@
     <string name="menu">Menu</string>
     <string name="stored_games">Stored Games</string>
     <string name="settings">Settings</string>
+    <string name="pairing">Pairing</string>
 </resources>

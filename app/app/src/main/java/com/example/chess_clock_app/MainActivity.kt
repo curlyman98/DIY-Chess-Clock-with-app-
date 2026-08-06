@@ -7,7 +7,8 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 
 import android.widget.ImageButton
-
+import android.content.Intent
+import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,5 +22,18 @@ class MainActivity : AppCompatActivity() {
         menuButton.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.START)
         }
+        // Open the pair menu from the drawer
+        val pairingButton =
+            findViewById<Button>(R.id.pairingButtonDrawer)
+
+        pairingButton.setOnClickListener {
+
+            val intent =
+                Intent(this, PairingActivity::class.java)
+
+            startActivity(intent)
+        }
+
+
     }
 }

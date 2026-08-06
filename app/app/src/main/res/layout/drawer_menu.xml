@@ -17,7 +17,7 @@
         android:padding="16dp"/>
 
     <Button
-        android:id="@+id/gamesButton"
+        android:id="@+id/gamesButtonDrawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/stored_games"
@@ -25,7 +25,15 @@
         android:backgroundTint="@color/background"/>
 
     <Button
-        android:id="@+id/settingsButton"
+        android:id="@+id/pairingButtonDrawer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pairing"
+        android:textColor="@color/text"
+        android:backgroundTint="@color/background"/>
+
+    <Button
+        android:id="@+id/settingsButtonDrawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/settings"
