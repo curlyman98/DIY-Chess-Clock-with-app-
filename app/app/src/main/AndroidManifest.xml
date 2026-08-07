@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Chess_Clock_App">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
 
             <intent-filter>
@@ -23,8 +23,9 @@
             </intent-filter>
 
         </activity>
+
         <activity
-        android:name=".PairingActivity" />
+        android:name=".activities.PairingActivity" />
 
     </application>
 

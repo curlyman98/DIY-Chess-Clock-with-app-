@@ -1,72 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- TO DO not ready just placeholder -->
 
-<androidx.drawerlayout.widget.DrawerLayout
+<!--original activity main -->
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
-    <!--original activity main -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background">
+    <!-- Top Bar -->
 
-        <!-- Top Bar -->
+    <View
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="@color/top_bar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <View
-            android:id="@+id/topBar"
-            android:layout_width="0dp"
-            android:layout_height="80dp"
-            android:background="@color/top_bar"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Menu Button -->
 
-        <!-- Menu Button -->
+    <ImageButton
+        android:id="@+id/menuButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/menu"
+        android:src="@android:drawable/ic_menu_sort_by_size"
 
-        <ImageButton
-            android:id="@+id/menuButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="Menu"
-            android:src="@android:drawable/ic_menu_sort_by_size"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/topBar"
 
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/topBar"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp" />
 
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp" />
+    <!-- Connection Indicator -->
 
-        <!-- Connection Indicator -->
+    <View
+        android:id="@+id/connectionIndicator"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:background="@drawable/circle_red"
 
-        <View
-            android:id="@+id/connectionIndicator"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:background="@drawable/circle_red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/topBar"
 
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/topBar"
-
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="40dp" />
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="40dp" />
 
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include
-        android:id="@+id/drawerMenu"
-        layout="@layout/drawer_menu"
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"/>
-
-</androidx.drawerlayout.widget.DrawerLayout>

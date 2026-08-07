@@ -7,10 +7,19 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background">#777777</color>
+
+    <color name="background">#999999</color>
     <color name="top_bar">#555555</color>
     <color name="text">#cccccc</color>
-    <color name="side_menu">#666666</color>
+    <color name="side_menu">#888888</color>
+
+    <color name="connected">#00AA00</color>
+    <color name="disconnected">#AA0000</color>
+
+    <color name="device_item_pressed">#555555</color>
+    <color name="device_item_background">#777777</color>
+    <color name="device_item_border">#010101</color>
+
 
 
 </resources>

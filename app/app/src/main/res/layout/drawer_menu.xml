@@ -5,7 +5,7 @@
     android:layout_width="280dp"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/top_bar">
+    android:background="@color/side_menu">
 
     <TextView
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:text="@string/stored_games"
         android:textColor="@color/text"
-        android:backgroundTint="@color/background"/>
+        android:backgroundTint="@color/device_item_background"/>
 
     <Button
         android:id="@+id/pairingButtonDrawer"
@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:text="@string/pairing"
         android:textColor="@color/text"
-        android:backgroundTint="@color/background"/>
+        android:backgroundTint="@color/device_item_background"/>
 
     <Button
         android:id="@+id/settingsButtonDrawer"
@@ -38,6 +38,6 @@
         android:layout_height="wrap_content"
         android:text="@string/settings"
         android:textColor="@color/text"
-        android:backgroundTint="@color/background"/>
+        android:backgroundTint="@color/device_item_background"/>
 
 </LinearLayout>
