@@ -7,30 +7,30 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chess_clock_app.R
-import com.example.chess_clock_app.models.Device
+import com.example.chess_clock_app.models.Game
 
-class DeviceAdapter(
-    private val devices: List<Device>,
-    private val onDeviceClicked: (Device) -> Unit,
-    private val onDeviceSettingsClicked: (Device) -> Unit
-) : RecyclerView.Adapter<DeviceAdapter.ViewHolder>() {
+class GameAdapter(
+    private val games: List<Game>,
+    private val onGameClicked: (Game) -> Unit,
+    private val onGameSettingsClicked: (Game) -> Unit
+) : RecyclerView.Adapter<GameAdapter.ViewHolder>()  {
 
+    //How a single member of the list looks like
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val deviceName: TextView =
-            view.findViewById(R.id.deviceName)
+        val gameName: TextView =
+            view.findViewById(R.id.gameName)
 
         val settingsButton: ImageButton =
             view.findViewById(R.id.deviceSettingsButton)
     }
-
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): ViewHolder {
         val view = LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.item_device, parent, false)
+            .inflate(R.layout.item_game, parent, false)
 
         return ViewHolder(view)
     }
@@ -39,20 +39,19 @@ class DeviceAdapter(
         holder: ViewHolder,
         position: Int
     ) {
-        val device = devices[position]
+        val game = games[position]
 
-        holder.deviceName.text = device.name
+        holder.gameName.text = game.name
 
         holder.itemView.setOnClickListener {
-            onDeviceClicked(device)
+            onGameClicked(game)
         }
 
         holder.settingsButton.setOnClickListener {
-            onDeviceSettingsClicked(device)
+            onGameSettingsClicked(game)
         }
     }
-
     override fun getItemCount(): Int {
-        return devices.size
+        return games.size
     }
 }

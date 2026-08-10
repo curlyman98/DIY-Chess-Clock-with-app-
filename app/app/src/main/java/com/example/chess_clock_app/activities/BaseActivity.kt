@@ -48,6 +48,8 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun setupDrawerNavigation() {
+
+        //Navigate to pairing
         val pairingButton =
             findViewById<Button>(R.id.pairingButtonDrawer)
 
@@ -57,6 +59,21 @@ abstract class BaseActivity : AppCompatActivity() {
             if (this !is PairingActivity) {
                 val intent =
                     Intent(this, PairingActivity::class.java)
+
+                startActivity(intent)
+            }
+        }
+        //Navigate to games/sync
+
+        val gamesButton =
+            findViewById<Button>(R.id.gamesButtonDrawer)
+
+        gamesButton.setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            if (this !is GameActivity) {
+                val intent =
+                    Intent(this, GameActivity::class.java)
 
                 startActivity(intent)
             }

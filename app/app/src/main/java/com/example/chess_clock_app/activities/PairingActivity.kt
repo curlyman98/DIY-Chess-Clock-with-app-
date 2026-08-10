@@ -43,7 +43,7 @@ class PairingActivity : BaseActivity() {
                 ).show()
             },
 
-            onSettingsClicked = { device ->
+            onDeviceSettingsClicked = { device ->
                 Toast.makeText(
                     this,
                     "Settings for ${device.name}",
@@ -81,7 +81,7 @@ class PairingActivity : BaseActivity() {
                 ).show()
             },
 
-            onSettingsClicked = {
+            onDeviceSettingsClicked = {
                 // Nearby devices do not need settings yet.
             }
         )

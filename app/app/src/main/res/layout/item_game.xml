@@ -18,7 +18,7 @@
     android:paddingBottom="8dp">
 
     <TextView
-        android:id="@+id/deviceName"
+        android:id="@+id/gameName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -28,11 +28,11 @@
         android:textStyle="bold" />
 
     <ImageButton
-        android:id="@+id/deviceSettingsButton"
+        android:id="@+id/gameSettingsButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/device_settings"
+        android:contentDescription="@string/game_properties"
         android:padding="12dp"
         android:src="@android:drawable/ic_menu_manage" />
 

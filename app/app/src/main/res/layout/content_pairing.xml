@@ -114,7 +114,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:backgroundTint="@color/device_item_background"
+        android:backgroundTint="@color/list_item_background"
         android:text="@string/pair_new_device"
         android:textColor="@color/text"
         app:layout_constraintBottom_toBottomOf="parent"

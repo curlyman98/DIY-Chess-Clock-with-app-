@@ -16,9 +16,9 @@
     <color name="connected">#00AA00</color>
     <color name="disconnected">#AA0000</color>
 
-    <color name="device_item_pressed">#555555</color>
-    <color name="device_item_background">#777777</color>
-    <color name="device_item_border">#010101</color>
+    <color name="list_item_pressed">#555555</color>
+    <color name="list_item_background">#777777</color>
+    <color name="list_item_border">#010101</color>
 
 
 

@@ -12,10 +12,13 @@
     <string name="device_settings">Device settings</string>
 
     <string name="stop_search">Stop Search</string>
+    <string name="cancel_search">Cancel Search</string>
 
     <string name="searching_devices">Searching for nearby devices…</string>
     <string name="no_paired_devices">No paired devices</string>
     <string name="nearby_devices">Nearby devices</string>
     <string name="no_nearby_devices">No nearby devices found</string>
-
+    <string name="sync">Sync</string>
+    <string name="no_uploaded_games">There are\n no uploaded games yet</string>
+    <string name="game_properties">Game Properties</string>
 </resources>

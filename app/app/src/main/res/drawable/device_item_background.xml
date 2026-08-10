@@ -5,7 +5,7 @@
     <!-- Appearance while pressed -->
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/device_item_pressed" />
+            <solid android:color="@color/list_item_pressed" />
             <corners android:radius="12dp" />
         </shape>
     </item>
@@ -13,12 +13,12 @@
     <!-- Normal appearance -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/device_item_background" />
+            <solid android:color="@color/list_item_background" />
             <corners android:radius="12dp" />
 
             <stroke
                 android:width="1dp"
-                android:color="@color/device_item_border" />
+                android:color="@color/list_item_border" />
         </shape>
     </item>
 

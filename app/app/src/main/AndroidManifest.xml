@@ -27,6 +27,9 @@
         <activity
         android:name=".activities.PairingActivity" />
 
+        <activity
+        android:name=".activities.GameActivity" />
+
     </application>
 
 </manifest>
