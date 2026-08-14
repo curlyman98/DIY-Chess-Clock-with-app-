@@ -79,6 +79,20 @@ abstract class BaseActivity : AppCompatActivity() {
             }
         }
 
+        val settingsButton =
+            findViewById<Button>(R.id.settingsButtonDrawer)
+
+        settingsButton.setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.START)
+
+            if (this !is SettingsActivity) {
+                val intent =
+                    Intent(this, SettingsActivity::class.java)
+
+                startActivity(intent)
+            }
+        }
+
         // Stored Games and Settings navigation will be added
         // when those Activities exist.
     }

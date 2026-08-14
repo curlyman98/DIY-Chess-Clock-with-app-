@@ -7,6 +7,7 @@
     <string name="pairing">Pairing</string>
     <string name="pair_new_device"> Add new device </string>
     <string name="paired_devices"> Paired Devices </string>
+    <string name="placeholder">Generic Placeholder</string>
 
     <string name="device_placeholder">Device</string>
     <string name="device_settings">Device settings</string>
@@ -21,4 +22,5 @@
     <string name="sync">Sync</string>
     <string name="no_uploaded_games">There are\n no uploaded games yet</string>
     <string name="game_properties">Game Properties</string>
+    <string name="cancel_sync">Cancel Pairing</string>
 </resources>

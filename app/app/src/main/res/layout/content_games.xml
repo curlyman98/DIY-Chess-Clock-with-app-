@@ -23,7 +23,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Paired devices list -->
+    <!-- Available games -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gamesRecyclerView"

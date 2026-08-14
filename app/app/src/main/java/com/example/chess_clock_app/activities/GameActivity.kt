@@ -10,6 +10,7 @@ import android.widget.Toast
 import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
+import android.content.Intent
 //import android.widget.TextView
 
 class GameActivity : BaseActivity() {
@@ -18,7 +19,7 @@ class GameActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         // Insert pairing-specific UI into activity_base.xml.
-        setActivityContent(R.layout.content_pairing)
+        setActivityContent(R.layout.content_games)
 
         val recyclerView =
             findViewById<RecyclerView>(R.id.gamesRecyclerView)
@@ -41,34 +42,41 @@ class GameActivity : BaseActivity() {
                     "Opening game ${games.name}",
                     Toast.LENGTH_SHORT
                 ).show()
-            },
+                val intent = Intent(this, GameEditActivity::class.java)
 
+                intent.putExtra("GAME_NAME", games.name)
+
+                startActivity(intent)
+
+            },
             onGameSettingsClicked = { games ->
                 Toast.makeText(
                     this,
                     "Settings for game ${games.name}",
                     Toast.LENGTH_SHORT
                 ).show()
+
             }
+
         )
-        val pairButton =
-            findViewById<Button>(R.id.pairButton)
+        val syncButton =
+            findViewById<Button>(R.id.syncButton)
 
         val scanningIndicator =
-            findViewById<ProgressBar>(R.id.scanningIndicator)
+            findViewById<ProgressBar>(R.id.syncingIndicator)
 
         var isSyncing = false
-        pairButton.setOnClickListener {
+        syncButton.setOnClickListener {
 
             isSyncing = !isSyncing
 
             if (isSyncing) {
                 scanningIndicator.visibility = View.VISIBLE
 
-                pairButton.text = getString(R.string.cancel_search)
+                syncButton.text = getString(R.string.cancel_sync)
             } else {
                 scanningIndicator.visibility = View.GONE
-                pairButton.text = getString(R.string.sync)
+                syncButton.text = getString(R.string.sync)
             }
         }
 

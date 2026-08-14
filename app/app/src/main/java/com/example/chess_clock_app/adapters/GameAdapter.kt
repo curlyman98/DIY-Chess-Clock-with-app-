@@ -21,8 +21,8 @@ class GameAdapter(
         val gameName: TextView =
             view.findViewById(R.id.gameName)
 
-        val settingsButton: ImageButton =
-            view.findViewById(R.id.deviceSettingsButton)
+       // val settingsButton: ImageButton =
+       //     view.findViewById(R.id.gameSettingsButton)
     }
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -47,9 +47,9 @@ class GameAdapter(
             onGameClicked(game)
         }
 
-        holder.settingsButton.setOnClickListener {
-            onGameSettingsClicked(game)
-        }
+        //holder.settingsButton.setOnClickListener {
+        //    onGameSettingsClicked(game)
+        //}
     }
     override fun getItemCount(): Int {
         return games.size

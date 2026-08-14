@@ -34,6 +34,8 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/game_properties"
         android:padding="12dp"
+        android:visibility="gone"
         android:src="@android:drawable/ic_menu_manage" />
+
 
 </LinearLayout>
