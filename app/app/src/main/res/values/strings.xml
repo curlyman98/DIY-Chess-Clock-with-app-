@@ -23,4 +23,5 @@
     <string name="no_uploaded_games">There are\n no uploaded games yet</string>
     <string name="game_properties">Game Properties</string>
     <string name="cancel_sync">Cancel Pairing</string>
+    <string name="but">But</string>
 </resources>

@@ -1,7 +1,11 @@
 package com.example.chess_clock_app.models
 
-data class Game (
-    val name: String
-    // string PGN
-    // string ID
-)
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class Game(
+    val name: String = "",
+    val pgn: String = "",
+    val iD: String = ""
+) : Parcelable

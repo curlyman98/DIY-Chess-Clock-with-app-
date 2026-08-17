@@ -12,20 +12,13 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.annotation.LayoutRes
+import androidx.core.content.IntentCompat
 import androidx.appcompat.app.AppCompatActivity
 
 class GameEditActivity : AppCompatActivity() {
-        protected fun setActivityContent(
-            @LayoutRes layoutResource: Int
-        ) {
-            val contentContainer =
-                findViewById<FrameLayout>(R.id.contentContainer)
 
-            LayoutInflater.from(this).inflate(
-                layoutResource,
-                contentContainer,
-                true
-            )
+        companion object {
+            const val EXTRA_GAME = "com.example.chess_clock_app.extra.GAME"
         }
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,14 +26,30 @@ class GameEditActivity : AppCompatActivity() {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_game_edit)
 
-            val gameName =
-                intent.getStringExtra("GAME_NAME")
+            val game = IntentCompat.getParcelableExtra(
+                        intent,
+                        EXTRA_GAME,
+                        Game::class.java
+            )
+            if (game == null) {
+                Toast.makeText(
+                    this,
+                    "Unable to open game: game data is missing.",
+                    Toast.LENGTH_LONG
+                ).show()
+                finish()
+                return
+            }
 
-            println(gameName)
-            val gameNameField =
-                findViewById<TextView>(R.id.titleText)
 
-            gameNameField.text = gameName
+            println(game.name)
+            val gameNameField = findViewById<TextView>(R.id.titleText)
+            val gamePGN = findViewById<TextView>(R.id.gamePGN)
+            val gameID = findViewById<TextView>(R.id.gameID)
+
+            gameNameField.text = game.name
+            gamePGN.text = game.pgn
+            gameID.text = game.iD
         }
 
 

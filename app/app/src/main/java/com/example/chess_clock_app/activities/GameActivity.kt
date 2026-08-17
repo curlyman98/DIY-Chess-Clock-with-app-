@@ -43,8 +43,8 @@ class GameActivity : BaseActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
                 val intent = Intent(this, GameEditActivity::class.java)
-
-                intent.putExtra("GAME_NAME", games.name)
+                // TODO fix by adding the package to gradle
+                intent.putExtra("GAME", games)
 
                 startActivity(intent)
 
