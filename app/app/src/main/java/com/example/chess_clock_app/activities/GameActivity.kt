@@ -25,9 +25,9 @@ class GameActivity : BaseActivity() {
             findViewById<RecyclerView>(R.id.gamesRecyclerView)
 
         val games = listOf(
-            Game("Grenke R9"),
-            Game("Random with Kriss"),
-            Game("Bib session")
+            Game(name ="Grenke R9"),
+            Game(name = "Random with Kriss"),
+            Game(name ="Bib session")
         )
 
         recyclerView.layoutManager =
@@ -43,8 +43,8 @@ class GameActivity : BaseActivity() {
                     Toast.LENGTH_SHORT
                 ).show()
                 val intent = Intent(this, GameEditActivity::class.java)
-                // TODO fix by adding the package to gradle
-                intent.putExtra("GAME", games)
+
+                intent.putExtra("GAME", games.key)
 
                 startActivity(intent)
 

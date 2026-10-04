@@ -25,13 +25,14 @@ class GameEditActivity : AppCompatActivity() {
 
             super.onCreate(savedInstanceState)
             setContentView(R.layout.activity_game_edit)
+            val gameNameField = findViewById<TextView>(R.id.titleText)
+            val gamePGN = findViewById<TextView>(R.id.gamePGN)
+            val gameID = findViewById<TextView>(R.id.gameID)
 
-            val game = IntentCompat.getParcelableExtra(
-                        intent,
-                        EXTRA_GAME,
-                        Game::class.java
-            )
-            if (game == null) {
+
+            /*TODO
+            val gameKey =
+            if (gameKey == null) {
                 Toast.makeText(
                     this,
                     "Unable to open game: game data is missing.",
@@ -42,7 +43,8 @@ class GameEditActivity : AppCompatActivity() {
             }
 
 
-            println(game.name)
+            println(gameKey)
+
             val gameNameField = findViewById<TextView>(R.id.titleText)
             val gamePGN = findViewById<TextView>(R.id.gamePGN)
             val gameID = findViewById<TextView>(R.id.gameID)
@@ -50,6 +52,8 @@ class GameEditActivity : AppCompatActivity() {
             gameNameField.text = game.name
             gamePGN.text = game.pgn
             gameID.text = game.iD
+            */
+
         }
 
 
