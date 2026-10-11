@@ -51,4 +51,9 @@ dependencies {
 
     // Settings storage
     implementation(libs.androidx.datastore.preferences)
+
+    // ViewModel + lifecycle
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.ktx)
 }

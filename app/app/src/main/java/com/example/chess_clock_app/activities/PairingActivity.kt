@@ -24,9 +24,9 @@ class PairingActivity : BaseActivity() {
             findViewById<RecyclerView>(R.id.devicesRecyclerView)
 
         val devices = listOf(
-            Device("Living Room Clock"),
-            Device("Tournament Clock"),
-            Device("ESP32 Test")
+            Device("CC",name = "Living Room Clock"),
+            Device("BB", name= "Tournament Clock"),
+            Device("AA", name="ESP32 Test")
         )
 
         recyclerView.layoutManager =
@@ -61,9 +61,9 @@ class PairingActivity : BaseActivity() {
         val scanningIndicator =
             findViewById<ProgressBar>(R.id.scanningIndicator)
         val nearbyDevices = listOf(
-                    Device("ESP32 Chess Clock"),
-                    Device("Workshop ESP32"),
-                    Device("Unknown Device")
+            Device("CC",name = "Living Room Clock"),
+            Device("BB", name= "Tournament Clock"),
+            Device("AA", name="ESP32 Test")
         )
 
 
