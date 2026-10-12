@@ -11,9 +11,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.content.Intent
+import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.chess_clock_app.viewmodels.GameListViewModel
+import kotlinx.coroutines.launch
 //import android.widget.TextView
 
 class GameActivity : BaseActivity() {
+
+    // Same instance survives rotation; created through the Factory the first time
+    private val viewModel: GameListViewModel by viewModels { GameListViewModel.Factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,41 +33,18 @@ class GameActivity : BaseActivity() {
         val recyclerView =
             findViewById<RecyclerView>(R.id.gamesRecyclerView)
 
-        val games = listOf(
-            Game(name ="Grenke R9"),
-            Game(name = "Random with Kriss"),
-            Game(name ="Bib session")
-        )
-
         recyclerView.layoutManager =
             LinearLayoutManager(this)
 
-        recyclerView.adapter = GameAdapter(
-            games = games,
-
-            onGameClicked = { games ->
-                Toast.makeText(
-                    this,
-                    "Opening game ${games.name}",
-                    Toast.LENGTH_SHORT
-                ).show()
-                val intent = Intent(this, GameEditActivity::class.java)
-
-                intent.putExtra("GAME", games.key)
-
-                startActivity(intent)
-
-            },
-            onGameSettingsClicked = { games ->
-                Toast.makeText(
-                    this,
-                    "Settings for game ${games.name}",
-                    Toast.LENGTH_SHORT
-                ).show()
-
+        // Re-runs every time the games table changes; only while the screen is visible
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.games.collect { games ->
+                    showGames(recyclerView, games)
+                }
             }
+        }
 
-        )
         val syncButton =
             findViewById<Button>(R.id.syncButton)
 
@@ -80,5 +66,34 @@ class GameActivity : BaseActivity() {
             }
         }
 
+    }
+
+    private fun showGames(recyclerView: RecyclerView, games: List<Game>) {
+        recyclerView.adapter = GameAdapter(
+            games = games,
+
+            onGameClicked = { games ->
+                Toast.makeText(
+                    this,
+                    "Opening game ${games.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+                val intent = Intent(this, GameEditActivity::class.java)
+
+                intent.putExtra(GameEditActivity.EXTRA_GAME, games.key)
+
+                startActivity(intent)
+
+            },
+            onGameSettingsClicked = { games ->
+                Toast.makeText(
+                    this,
+                    "Settings for game ${games.name}",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+
+        )
     }
 }
