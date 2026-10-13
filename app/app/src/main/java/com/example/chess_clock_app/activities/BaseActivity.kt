@@ -47,6 +47,9 @@ abstract class BaseActivity : AppCompatActivity() {
         )
     }
 
+    // Runs before the drawer opens another screen
+    protected open fun confirmLeave(proceed: () -> Unit) = proceed()
+
     private fun setupDrawerNavigation() {
 
         //Navigate to pairing
@@ -57,10 +60,12 @@ abstract class BaseActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
 
             if (this !is PairingActivity) {
-                val intent =
-                    Intent(this, PairingActivity::class.java)
+                confirmLeave {
+                    val intent =
+                        Intent(this, PairingActivity::class.java)
 
-                startActivity(intent)
+                    startActivity(intent)
+                }
             }
         }
         //Navigate to games/sync
@@ -72,10 +77,12 @@ abstract class BaseActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
 
             if (this !is GameActivity) {
-                val intent =
-                    Intent(this, GameActivity::class.java)
+                confirmLeave {
+                    val intent =
+                        Intent(this, GameActivity::class.java)
 
-                startActivity(intent)
+                    startActivity(intent)
+                }
             }
         }
 
@@ -86,10 +93,12 @@ abstract class BaseActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
 
             if (this !is SettingsActivity) {
-                val intent =
-                    Intent(this, SettingsActivity::class.java)
+                confirmLeave {
+                    val intent =
+                        Intent(this, SettingsActivity::class.java)
 
-                startActivity(intent)
+                    startActivity(intent)
+                }
             }
         }
 

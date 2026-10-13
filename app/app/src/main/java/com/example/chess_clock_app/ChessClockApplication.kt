@@ -27,8 +27,8 @@ class ChessClockApplication : Application() {
             db.execSQL(
                 """
                 INSERT INTO games (name, pgn, espID, importTime) VALUES
-                    ('Grenke R9', '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6', 'ESP-01', '2026-10-01T18:30'),
-                    ('Random with Kriss', '1. d4 d5 2. c4 e6', 'ESP-01', '2026-10-05T20:15'),
+                    ('Grenke R9', '{[%clk 0:04:58]} {[%clk 0:04:55]} {[%clk 0:04:51]} {[%clk 0:04:47]} {[%clk 0:04:40]} {[%clk 0:04:31]}', 'ESP-01', '2026-10-01T18:30'),
+                    ('Random with Kriss', '1. d4 {[%clk 0:09:57]} d5 {[%clk 0:09:52]} 2. c4 {[%clk 0:09:41]} e6 {[%clk 0:09:30]} {[%clk 0:09:12]} {[%clk 0:09:01]}', 'ESP-01', '2026-10-05T20:15'),
                     ('Bib session', '1. c4 e5 2. Nc3 Nf6', 'ESP-02', '2026-10-10T14:00')
                 """.trimIndent()
             )

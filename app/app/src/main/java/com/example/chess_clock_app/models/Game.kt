@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 data class Game(
     val pgn: String = "",
     val name: String = "",
+    //val whitePlayer: String = "",
+    //val blackPlayer: String = "",
     val espID: String = "",
     val importTime: String = "",
     @PrimaryKey(autoGenerate = true)

@@ -24,4 +24,23 @@
     <string name="game_properties">Game Properties</string>
     <string name="cancel_sync">Cancel Pairing</string>
     <string name="but">But</string>
+
+    <!-- Game edit screen -->
+    <string name="imported_on">Imported %1$s</string>
+    <string name="no_moves">No moves or clock times yet</string>
+    <string name="previous_move">Previous move</string>
+    <string name="next_move">Next move</string>
+    <string name="save">Save</string>
+    <string name="moves_saved">Moves saved</string>
+    <string name="discard">Discard</string>
+    <string name="cancel">Cancel</string>
+    <string name="unsaved_changes_title">Unsaved changes</string>
+    <string name="unsaved_changes_message">You have moves that are not saved yet. Save them before leaving?</string>
+    <string name="game_missing">Unable to open game: game data is missing.</string>
+    <string name="game_not_found">This game no longer exists.</string>
+    <string name="promote_to">Promote pawn to</string>
+    <string name="queen">Queen</string>
+    <string name="rook">Rook</string>
+    <string name="bishop">Bishop</string>
+    <string name="knight">Knight</string>
 </resources>
