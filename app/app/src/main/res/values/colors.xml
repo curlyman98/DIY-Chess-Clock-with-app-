@@ -20,6 +20,8 @@
     <color name="list_item_background">#777777</color>
     <color name="list_item_border">#010101</color>
 
+    <color name="current_move">#5AFFEB3B</color>
+
 
 
 </resources>

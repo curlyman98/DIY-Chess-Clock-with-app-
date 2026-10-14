@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.chess_clock_app.ChessClockApplication
 import com.example.chess_clock_app.models.Game
+import com.example.chess_clock_app.repositories.DeviceRepository
 import com.example.chess_clock_app.repositories.GameRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,18 +17,24 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-enum class GameSortOrder { IMPORT_TIME, NAME }
+enum class GameSortOrder { CREATED_AT, NAME }
 
-class GameListViewModel(private val repository: GameRepository) : ViewModel() {
+class GameListViewModel(
+    private val repository: GameRepository,
+    deviceRepository: DeviceRepository,
+) : ViewModel() {
 
-    private val sortOrder = MutableStateFlow(GameSortOrder.IMPORT_TIME)
+    // Sync only works while a chess clock is connected
+    val isConnected: StateFlow<Boolean> = deviceRepository.isConnected
+
+    private val sortOrder = MutableStateFlow(GameSortOrder.CREATED_AT)
 
     // Switches to the matching query whenever the sort order changes
     @OptIn(ExperimentalCoroutinesApi::class)
     val games: StateFlow<List<Game>> = sortOrder
         .flatMapLatest { order ->
             when (order) {
-                GameSortOrder.IMPORT_TIME -> repository.gamesByImportTime
+                GameSortOrder.CREATED_AT -> repository.gamesByCreatedAt
                 GameSortOrder.NAME -> repository.gamesByName
             }
         }
@@ -49,7 +56,7 @@ class GameListViewModel(private val repository: GameRepository) : ViewModel() {
         val Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as ChessClockApplication
-                GameListViewModel(app.gameRepository)
+                GameListViewModel(app.gameRepository, app.deviceRepository)
             }
         }
     }

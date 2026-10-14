@@ -7,10 +7,9 @@ import androidx.room.PrimaryKey
 data class Game(
     val pgn: String = "",
     val name: String = "",
-    //val whitePlayer: String = "",
-    //val blackPlayer: String = "",
     val espID: String = "",
-    val importTime: String = "",
+    // When the game was created or imported, in milliseconds since 1970 (System.currentTimeMillis())
+    val createdAt: Long = 0L,
     @PrimaryKey(autoGenerate = true)
     val key: Int = 0
 )

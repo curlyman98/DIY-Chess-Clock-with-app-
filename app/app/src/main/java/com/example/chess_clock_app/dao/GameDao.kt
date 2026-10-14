@@ -11,8 +11,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface GameDao {
 
+    // Returns the key Room generated for the new row
     @Insert
-    suspend fun insertGame(game: Game)
+    suspend fun insertGame(game: Game): Long
 
     @Delete
     suspend fun deleteGame(game: Game)
@@ -20,8 +21,8 @@ interface GameDao {
     @Update
     suspend fun update(game: Game)
 
-    @Query("SELECT * FROM games ORDER BY importTime ASC")
-    fun getGameOrderedByImportTime(): Flow<List<Game>>
+    @Query("SELECT * FROM games ORDER BY createdAt ASC")
+    fun getGameOrderedByCreatedAt(): Flow<List<Game>>
 
     @Query("SELECT * FROM games ORDER BY name ASC")
     fun getGameOrderedByName(): Flow<List<Game>>

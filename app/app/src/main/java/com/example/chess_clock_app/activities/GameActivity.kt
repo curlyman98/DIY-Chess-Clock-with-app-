@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.chess_clock_app.utils.setEnabledLook
 import com.example.chess_clock_app.viewmodels.GameListViewModel
 import kotlinx.coroutines.launch
 //import android.widget.TextView
@@ -50,6 +51,23 @@ class GameActivity : BaseActivity() {
 
         val scanningIndicator =
             findViewById<ProgressBar>(R.id.syncingIndicator)
+
+        // Sync is greyed out while no chess clock is connected
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isConnected.collect { connected ->
+                    syncButton.setEnabledLook(connected)
+                }
+            }
+        }
+
+        // Opens the edit screen without a game key, which means "new game"
+        val addGameButton =
+            findViewById<Button>(R.id.addGameButton)
+
+        addGameButton.setOnClickListener {
+            startActivity(Intent(this, GameEditActivity::class.java))
+        }
 
         var isSyncing = false
         syncButton.setOnClickListener {

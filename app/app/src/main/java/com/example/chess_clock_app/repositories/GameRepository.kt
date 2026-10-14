@@ -8,13 +8,14 @@ import kotlinx.coroutines.flow.Flow
 // Later syncing games from the ESP32 can live here too.
 class GameRepository(private val gameDao: GameDao) {
 
-    val gamesByImportTime: Flow<List<Game>> = gameDao.getGameOrderedByImportTime()
+    val gamesByCreatedAt: Flow<List<Game>> = gameDao.getGameOrderedByCreatedAt()
 
     val gamesByName: Flow<List<Game>> = gameDao.getGameOrderedByName()
 
     suspend fun getGame(key: Int): Game? = gameDao.getById(key)
 
-    suspend fun addGame(game: Game) = gameDao.insertGame(game)
+    // Returns the key of the new game
+    suspend fun addGame(game: Game): Long = gameDao.insertGame(game)
 
     suspend fun updateGame(game: Game) = gameDao.update(game)
 

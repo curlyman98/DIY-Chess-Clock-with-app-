@@ -1,8 +1,12 @@
 package com.example.chess_clock_app.chess
 
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+
 data class PgnGame(
-    // Header lines like [Event "Grenke"], kept unchanged
-    val tags: List<String> = emptyList(),
+    // Header tags like [White "Magnus"], in the order they are written
+    val tags: Map<String, String> = emptyMap(),
     // One entry per half-move, in SAN: e4, e5, Nf3, ...
     val sans: List<String> = emptyList(),
     // One entry per half-move: the remaining clock time from {[%clk 0:04:58]}
@@ -14,16 +18,30 @@ data class PgnGame(
 object Pgn {
 
 
-    private val TAG_LINE = Regex("""^\s*\[.*\]\s*$""")
+    private val TAG_LINE = Regex("""^\s*\[(\w+)\s+"((?:[^"\\]|\\.)*)"\]\s*$""")
     private val COMMENT = Regex("""\{([^\}]*)\}""")
     private val CLOCK = Regex("""\[%clk\s+([0-9:.]+)\]""")
     private val MOVE_NUMBER = Regex("""^\d+\.+""")
     private val RESULTS = setOf("1-0", "0-1", "1/2-1/2", "*")
 
+    // The date format PGN uses in the [Date] tag
+    private val DATE = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+
+    fun formatDate(millis: Long): String =
+        DATE.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
+
     fun parse(text: String): PgnGame {
-        val lines = text.lines()
-        val tags = lines.filter { TAG_LINE.matches(it) }.map { it.trim() }
-        val movetext = lines.filterNot { TAG_LINE.matches(it) }.joinToString(" ")
+        val tags = linkedMapOf<String, String>()
+        val movetextLines = mutableListOf<String>()
+        for (line in text.lines()) {
+            val tag = TAG_LINE.matchEntire(line)
+            if (tag != null) {
+                tags[tag.groupValues[1]] = unescape(tag.groupValues[2])
+            } else {
+                movetextLines += line
+            }
+        }
+        val movetext = movetextLines.joinToString(" ")
 
         // Pull the clock times out of the comments, then drop the comments
         val clocks = mutableListOf<String>()
@@ -63,6 +81,15 @@ object Pgn {
         parts += game.result
 
         val movetext = parts.joinToString(" ")
-        return if (game.tags.isEmpty()) movetext else game.tags.joinToString("\n") + "\n\n" + movetext
+        if (game.tags.isEmpty()) return movetext
+
+        // The [Result] tag must always match the result at the end of the moves
+        val tags = game.tags + ("Result" to game.result)
+        val header = tags.entries.joinToString("\n") { (name, value) -> "[$name \"${escape(value)}\"]" }
+        return header + "\n\n" + movetext
     }
+
+    // Inside a tag value, " and \ are written as \" and \\
+    private fun escape(value: String) = value.replace("\\", "\\\\").replace("\"", "\\\"")
+    private fun unescape(value: String) = value.replace("\\\"", "\"").replace("\\\\", "\\")
 }

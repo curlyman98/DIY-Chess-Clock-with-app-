@@ -3,18 +3,30 @@ package com.example.chess_clock_app.activities
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.chess_clock_app.R
+import com.example.chess_clock_app.viewmodels.TopBarViewModel
+import kotlinx.coroutines.launch
 
 abstract class BaseActivity : AppCompatActivity() {
 
     protected lateinit var drawerLayout: DrawerLayout
+
+    private val topBarViewModel: TopBarViewModel by viewModels { TopBarViewModel.Factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +44,31 @@ abstract class BaseActivity : AppCompatActivity() {
         }
 
         setupDrawerNavigation()
+
+        // The app draws behind the system navigation bar, so keep every screen's content above it
+        val contentContainer =
+            findViewById<FrameLayout>(R.id.contentContainer)
+
+        ViewCompat.setOnApplyWindowInsetsListener(contentContainer) { view, insets ->
+            view.updatePadding(
+                bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            )
+            insets
+        }
+
+        // Connection light: green while a chess clock is connected
+        val connectionIndicator =
+            findViewById<View>(R.id.connectionIndicator)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                topBarViewModel.isConnected.collect { connected ->
+                    connectionIndicator.setBackgroundResource(
+                        if (connected) R.drawable.circle_green else R.drawable.circle_red
+                    )
+                }
+            }
+        }
     }
 
     protected fun setActivityContent(

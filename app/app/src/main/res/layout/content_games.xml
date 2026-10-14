@@ -68,18 +68,34 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Starts or stops searching -->
+    <!-- Opens an empty game; it is only kept if it gets saved -->
+
+    <Button
+        android:id="@+id/addGameButton"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="@color/list_item_background"
+        android:text="@string/add_game"
+        android:textColor="@color/text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/syncButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Starts or stops syncing; only enabled while a chess clock is connected -->
 
     <Button
         android:id="@+id/syncButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         android:backgroundTint="@color/list_item_background"
         android:text="@string/sync"
         android:textColor="@color/text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/addGameButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Dotted line along the bottom edge: hints that a text can be tapped to edit it -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:height="3dp"
+        android:gravity="bottom">
+        <shape android:shape="line">
+            <stroke
+                android:width="2dp"
+                android:color="@color/text"
+                android:dashWidth="3dp"
+                android:dashGap="4dp" />
+        </shape>
+    </item>
+
+</layer-list>

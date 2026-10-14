@@ -12,5 +12,23 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Chess_Clock_App.Dialog</item>
+    </style>
+
+    <!-- Popups in the app's grey colors instead of white and purple -->
+    <style name="ThemeOverlay.Chess_Clock_App.Dialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <!-- Background -->
+        <item name="colorSurface">@color/background</item>
+        <!-- Title, message and list items -->
+        <item name="colorOnSurface">@color/text</item>
+        <item name="android:textColorPrimary">@color/text</item>
+        <item name="android:textColorSecondary">@color/text</item>
+        <item name="android:textColorAlertDialogListItem">@color/text</item>
+        <!-- Buttons, text cursor and the line under text fields -->
+        <item name="colorPrimary">@color/text</item>
+        <item name="colorControlNormal">@color/text</item>
+        <item name="colorControlActivated">@color/text</item>
+        <item name="colorSecondary">@color/text</item>
     </style>
 </resources>
