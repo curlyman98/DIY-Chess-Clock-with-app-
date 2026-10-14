@@ -93,7 +93,7 @@ class GameActivity : BaseActivity() {
             onGameClicked = { games ->
                 Toast.makeText(
                     this,
-                    "Opening game ${games.name}",
+                    getString(R.string.opening_game, games.name),
                     Toast.LENGTH_SHORT
                 ).show()
                 val intent = Intent(this, GameEditActivity::class.java)

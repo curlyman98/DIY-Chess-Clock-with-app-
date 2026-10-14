@@ -2,6 +2,7 @@
 
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/deviceItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,6 +28,8 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
+    <!-- Opens the device screen; same pencil as the game edit button -->
+
     <ImageButton
         android:id="@+id/deviceSettingsButton"
         android:layout_width="48dp"
@@ -34,6 +37,7 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/device_settings"
         android:padding="12dp"
-        android:src="@android:drawable/ic_menu_manage" />
+        android:src="@drawable/ic_edit"
+        app:tint="@color/text" />
 
 </LinearLayout>

@@ -65,4 +65,25 @@
     <string name="result_draw" translatable="false">½-½</string>
     <string name="result_black_wins" translatable="false">0-1</string>
     <string name="result_unknown">Unknown</string>
+
+    <!-- Connection indicator in the top bar -->
+    <string name="connection_status">Connection status</string>
+    <string name="no_device_connected">No device connected</string>
+    <string name="connected_to">Connected to %1$s</string>
+
+    <!-- Stored games -->
+    <string name="opening_game">Opening game %1$s</string>
+
+    <!-- Device screen -->
+    <string name="rename_device">Rename device</string>
+    <string name="forget_device">Forget device</string>
+    <string name="forget_device_message">%1$s will be removed from the app. Its games are kept.</string>
+    <string name="forget">Forget</string>
+    <string name="mac_address">MAC address</string>
+    <string name="mac_copied">MAC address copied</string>
+    <string name="last_connected">Last connected: %1$s</string>
+    <string name="last_synced">Last synced: %1$s</string>
+    <string name="never">Never</string>
+    <string name="device_games">Games from this device</string>
+    <string name="no_device_games">No games imported from this device yet</string>
 </resources>

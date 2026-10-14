@@ -15,6 +15,8 @@ import com.example.chess_clock_app.chess.Side
 import com.example.chess_clock_app.models.Game
 import com.example.chess_clock_app.models.GameDefaults
 import com.example.chess_clock_app.repositories.GameRepository
+import com.example.chess_clock_app.utils.InputLimits
+import com.example.chess_clock_app.utils.cleanInput
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,11 +30,12 @@ data class MoveCell(val san: String?, val clock: String?, val isCurrent: Boolean
 data class MoveRow(val number: Int, val white: MoveCell?, val black: MoveCell?)
 
 // The PGN header values edited in the "Game details" popup (the players are edited through the pills).
-// Unknown values are "?" as in PGN; the date is in PGN format, e.g. "2026.10.14".
+// Unknown values are "?" as in PGN. createdAt is also the PGN [Date]: set to "now" when the game is
+// created or imported, changed only through the date picker.
 data class GameDetails(
     val name: String = "",
     val site: String = "?",
-    val date: String = "????.??.??",
+    val createdAt: Long = 0L,
     val round: String = "?",
     val result: String = "*",
 )
@@ -42,7 +45,6 @@ data class GameEditUiState(
     val isLoading: Boolean = true,
     val notFound: Boolean = false,
     val details: GameDetails = GameDetails(),
-    val createdAt: Long = 0L,
     val white: String = "",
     val black: String = "",
     val position: Position = Position.start(),
@@ -159,10 +161,10 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
     // From the "Game details" popup. An empty name keeps the old one; other empty fields become "?"
     fun updateDetails(newDetails: GameDetails) {
         details = GameDetails(
-            name = newDetails.name.trim().ifEmpty { details.name },
-            site = newDetails.site.trim().ifEmpty { "?" },
-            date = newDetails.date,
-            round = newDetails.round.trim().ifEmpty { "?" },
+            name = newDetails.name.cleanInput(InputLimits.GAME_NAME).ifEmpty { details.name },
+            site = newDetails.site.cleanInput(InputLimits.SITE).ifEmpty { "?" },
+            createdAt = newDetails.createdAt,
+            round = newDetails.round.cleanInput(InputLimits.ROUND).ifEmpty { "?" },
             result = newDetails.result,
         )
         publish()
@@ -170,7 +172,7 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
 
     // An empty name goes back to the default
     fun setPlayerName(side: Side, newName: String) {
-        val playerName = newName.trim().ifEmpty { GameDefaults.UNKNOWN_PLAYER }
+        val playerName = newName.cleanInput(InputLimits.PLAYER_NAME).ifEmpty { GameDefaults.UNKNOWN_PLAYER }
         if (side == Side.WHITE) white = playerName else black = playerName
         publish()
     }
@@ -185,13 +187,14 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
             tags = pgn.tags + mapOf(
                 "Event" to details.name,
                 "Site" to details.site,
-                "Date" to details.date,
+                // Always follows createdAt, so the two can't drift apart
+                "Date" to Pgn.formatDate(details.createdAt),
                 "Round" to details.round,
                 "White" to white,
                 "Black" to black,
             ),
         )
-        game = current.copy(name = details.name, pgn = Pgn.write(pgn))
+        game = current.copy(name = details.name, createdAt = details.createdAt, pgn = Pgn.write(pgn))
         saved = edits
         publish()
 
@@ -237,7 +240,8 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
         details = GameDetails(
             name = loaded.name,
             site = pgn.tags["Site"] ?: "?",
-            date = pgn.tags["Date"] ?: "????.??.??",
+            // A different [Date] in the PGN is replaced on the next save
+            createdAt = loaded.createdAt,
             round = pgn.tags["Round"] ?: "?",
             result = pgn.result,
         )
@@ -286,7 +290,6 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
         _uiState.value = GameEditUiState(
             isLoading = false,
             details = details,
-            createdAt = current.createdAt,
             white = white,
             black = black,
             position = positions[currentPly],

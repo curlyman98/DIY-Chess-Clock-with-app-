@@ -8,6 +8,8 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.chess_clock_app.ChessClockApplication
 import com.example.chess_clock_app.models.Device
 import com.example.chess_clock_app.repositories.DeviceRepository
+import com.example.chess_clock_app.utils.InputLimits
+import com.example.chess_clock_app.utils.cleanInput
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -23,8 +25,10 @@ class PairingViewModel(private val repository: DeviceRepository) : ViewModel() {
         viewModelScope.launch { repository.saveDevice(device) }
     }
 
+    // An empty name keeps the old one
     fun renameDevice(device: Device, newName: String) {
-        viewModelScope.launch { repository.updateDevice(device.copy(name = newName)) }
+        val name = newName.cleanInput(InputLimits.DEVICE_NAME).ifEmpty { device.name }
+        viewModelScope.launch { repository.updateDevice(device.copy(name = name)) }
     }
 
     fun forgetDevice(device: Device) {

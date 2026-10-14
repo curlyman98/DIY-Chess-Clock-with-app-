@@ -33,7 +33,6 @@ object GameDefaults {
             "Black" to UNKNOWN_PLAYER,
             "Result" to pgn.result,
         )
-        // TODO: Site, Date and Round can't be edited in the app yet
         return pgn.copy(tags = defaults + pgn.tags)
     }
 }

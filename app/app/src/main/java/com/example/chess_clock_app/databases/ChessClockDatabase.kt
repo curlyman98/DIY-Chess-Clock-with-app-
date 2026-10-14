@@ -9,7 +9,7 @@ import com.example.chess_clock_app.models.Device
 @Database(
     entities = [Game::class,
                Device::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class ChessClockDatabase : RoomDatabase() {

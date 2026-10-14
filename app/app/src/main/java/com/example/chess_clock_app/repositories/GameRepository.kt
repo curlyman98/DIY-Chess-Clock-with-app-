@@ -12,9 +12,10 @@ class GameRepository(private val gameDao: GameDao) {
 
     val gamesByName: Flow<List<Game>> = gameDao.getGameOrderedByName()
 
+    fun gamesFromDevice(mac: String): Flow<List<Game>> = gameDao.getGamesFromDevice(mac)
+
     suspend fun getGame(key: Int): Game? = gameDao.getById(key)
 
-    // Returns the key of the new game
     suspend fun addGame(game: Game): Long = gameDao.insertGame(game)
 
     suspend fun updateGame(game: Game) = gameDao.update(game)

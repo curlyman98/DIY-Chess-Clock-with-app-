@@ -5,14 +5,15 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.chess_clock_app.ChessClockApplication
+import com.example.chess_clock_app.models.Device
 import com.example.chess_clock_app.repositories.DeviceRepository
 import kotlinx.coroutines.flow.StateFlow
 
 // Used by BaseActivity for the shared top bar, so every screen gets it
 class TopBarViewModel(deviceRepository: DeviceRepository) : ViewModel() {
 
-    // Green or red light in the top right corner
-    val isConnected: StateFlow<Boolean> = deviceRepository.isConnected
+    // Green light while not null, red otherwise; tapping the light shows its name
+    val connectedDevice: StateFlow<Device?> = deviceRepository.connectedDevice
 
     companion object {
         val Factory = viewModelFactory {

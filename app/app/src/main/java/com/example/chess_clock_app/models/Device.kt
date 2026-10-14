@@ -8,7 +8,7 @@ data class Device(
     @PrimaryKey
     val mac: String,
     val name: String,
-
-    // val macAddress: String
-    //  Last connection
+    // In milliseconds since 1970; null = never
+    val lastConnectedAt: Long? = null,
+    val lastSyncedAt: Long? = null,
 )

@@ -35,6 +35,8 @@
             android:name=".activities.GameEditActivity" />
         <activity
             android:name=".activities.SettingsActivity" />
+        <activity
+            android:name=".activities.DeviceActivity" />
     </application>
 
 </manifest>

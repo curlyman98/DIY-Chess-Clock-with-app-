@@ -18,6 +18,7 @@
         <!-- Game name, also written as [Event] in the PGN -->
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/detailsNameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/details_name">
@@ -35,6 +36,7 @@
         <!-- Where the game was played -->
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/detailsSiteLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -72,6 +74,7 @@
         <!-- Round of a tournament, e.g. 9 -->
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/detailsRoundLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

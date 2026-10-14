@@ -36,19 +36,30 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp" />
 
-    <!-- Connection Indicator -->
+    <!-- Connection Indicator; the 48dp frame is the touch area, the dot stays 16dp -->
 
-    <View
-        android:id="@+id/connectionIndicator"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:background="@drawable/circle_red"
+    <FrameLayout
+        android:id="@+id/connectionIndicatorButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/connection_status"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/topBar"
 
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="40dp" />
+        android:layout_marginTop="24dp">
+
+        <View
+            android:id="@+id/connectionIndicator"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circle_red" />
+
+    </FrameLayout>
 
 
 

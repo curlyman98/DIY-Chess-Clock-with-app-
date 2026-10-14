@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -25,7 +26,9 @@ class GameListViewModel(
 ) : ViewModel() {
 
     // Sync only works while a chess clock is connected
-    val isConnected: StateFlow<Boolean> = deviceRepository.isConnected
+    val isConnected: StateFlow<Boolean> = deviceRepository.connectedDevice
+        .map { it != null }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
 
     private val sortOrder = MutableStateFlow(GameSortOrder.CREATED_AT)
 

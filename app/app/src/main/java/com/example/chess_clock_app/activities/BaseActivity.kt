@@ -4,11 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -19,7 +23,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.chess_clock_app.R
+import com.example.chess_clock_app.utils.limitLength
 import com.example.chess_clock_app.viewmodels.TopBarViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -62,12 +68,25 @@ abstract class BaseActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                topBarViewModel.isConnected.collect { connected ->
+                topBarViewModel.connectedDevice.collect { device ->
                     connectionIndicator.setBackgroundResource(
-                        if (connected) R.drawable.circle_green else R.drawable.circle_red
+                        if (device != null) R.drawable.circle_green else R.drawable.circle_red
                     )
                 }
             }
+        }
+
+        // Tapping the light tells which clock is connected
+        val connectionIndicatorButton =
+            findViewById<View>(R.id.connectionIndicatorButton)
+
+        connectionIndicatorButton.setOnClickListener {
+            val device = topBarViewModel.connectedDevice.value
+            val message =
+                if (device != null) getString(R.string.connected_to, device.name)
+                else getString(R.string.no_device_connected)
+
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -86,6 +105,34 @@ abstract class BaseActivity : AppCompatActivity() {
 
     // Runs before the drawer opens another screen
     protected open fun confirmLeave(proceed: () -> Unit) = proceed()
+
+    // Popup with a text field, filled with the current value; typing stops at maxLength
+    protected fun showEditDialog(
+        @StringRes title: Int,
+        currentValue: String,
+        maxLength: Int,
+        onDone: (String) -> Unit
+    ) {
+        // Inflate with the popup's context, so the field uses the popup colors, not the screen's
+        val builder = MaterialAlertDialogBuilder(this)
+        val dialogView = LayoutInflater.from(builder.context).inflate(R.layout.dialog_edit_text, null)
+        val editText = dialogView.findViewById<EditText>(R.id.editText)
+        editText.limitLength(maxLength)
+        editText.setText(currentValue)
+        editText.selectAll()
+
+        val dialog = builder
+            .setTitle(title)
+            .setView(dialogView)
+            .setPositiveButton(R.string.ok) { _, _ -> onDone(editText.text.toString()) }
+            .setNegativeButton(R.string.cancel, null)
+            .create()
+
+        // Open the keyboard right away
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
+        editText.requestFocus()
+        dialog.show()
+    }
 
     private fun setupDrawerNavigation() {
 

@@ -3,7 +3,6 @@ package com.example.chess_clock_app.activities
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -11,7 +10,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.annotation.StringRes
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,17 +19,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chess_clock_app.R
 import com.example.chess_clock_app.adapters.MoveAdapter
 import com.example.chess_clock_app.chess.PieceType
-import com.example.chess_clock_app.chess.Pgn
 import com.example.chess_clock_app.chess.Side
+import com.example.chess_clock_app.utils.InputLimits
 import com.example.chess_clock_app.utils.formatDate
 import com.example.chess_clock_app.utils.formatDateTime
+import com.example.chess_clock_app.utils.limitLength
 import com.example.chess_clock_app.utils.setEnabledLook
+import com.example.chess_clock_app.utils.toLocalDate
+import com.example.chess_clock_app.utils.withDate
 import com.example.chess_clock_app.viewmodels.GameDetails
 import com.example.chess_clock_app.viewmodels.GameEditViewModel
 import com.example.chess_clock_app.views.ChessBoardView
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.LocalDate
@@ -108,12 +110,12 @@ class GameEditActivity : BaseActivity() {
 
         // Tapping a player name opens a popup to edit it
         whitePlayer.setOnClickListener {
-            showEditDialog(R.string.edit_player_name, viewModel.uiState.value.white) { newName ->
+            showEditDialog(R.string.edit_player_name, viewModel.uiState.value.white, InputLimits.PLAYER_NAME) { newName ->
                 viewModel.setPlayerName(Side.WHITE, newName)
             }
         }
         blackPlayer.setOnClickListener {
-            showEditDialog(R.string.edit_player_name, viewModel.uiState.value.black) { newName ->
+            showEditDialog(R.string.edit_player_name, viewModel.uiState.value.black, InputLimits.PLAYER_NAME) { newName ->
                 viewModel.setPlayerName(Side.BLACK, newName)
             }
         }
@@ -137,7 +139,7 @@ class GameEditActivity : BaseActivity() {
                     if (state.isLoading) return@collect
 
                     titleText.text = state.details.name
-                    dateText.text = formatDateTime(state.createdAt)
+                    dateText.text = formatDateTime(state.details.createdAt)
                     whitePlayer.text = state.white
                     blackPlayer.text = state.black
                     board.position = state.position
@@ -181,28 +183,6 @@ class GameEditActivity : BaseActivity() {
             .show()
     }
 
-    // Popup with a text field, filled with the current value
-    private fun showEditDialog(@StringRes title: Int, currentValue: String, onDone: (String) -> Unit) {
-        // Inflate with the popup's context, so the field uses the popup colors, not the screen's
-        val builder = MaterialAlertDialogBuilder(this)
-        val dialogView = LayoutInflater.from(builder.context).inflate(R.layout.dialog_edit_text, null)
-        val editText = dialogView.findViewById<EditText>(R.id.editText)
-        editText.setText(currentValue)
-        editText.selectAll()
-
-        val dialog = builder
-            .setTitle(title)
-            .setView(dialogView)
-            .setPositiveButton(R.string.ok) { _, _ -> onDone(editText.text.toString()) }
-            .setNegativeButton(R.string.cancel, null)
-            .create()
-
-        // Open the keyboard right away
-        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
-        editText.requestFocus()
-        dialog.show()
-    }
-
     // Popup with the PGN header values; the players are edited through the pills instead
     private fun showDetailsDialog() {
         val current = viewModel.uiState.value.details
@@ -215,17 +195,22 @@ class GameEditActivity : BaseActivity() {
         val roundField = dialogView.findViewById<EditText>(R.id.detailsRound)
         val resultGroup = dialogView.findViewById<MaterialButtonToggleGroup>(R.id.detailsResult)
 
+        dialogView.findViewById<TextInputLayout>(R.id.detailsNameLayout).limitLength(InputLimits.GAME_NAME)
+        dialogView.findViewById<TextInputLayout>(R.id.detailsSiteLayout).limitLength(InputLimits.SITE)
+        dialogView.findViewById<TextInputLayout>(R.id.detailsRoundLayout).limitLength(InputLimits.ROUND)
+
         // "?" means unknown in PGN; shown as an empty field
         nameField.setText(current.name)
         siteField.setText(current.site.takeUnless { it == "?" })
         roundField.setText(current.round.takeUnless { it == "?" })
         resultGroup.check(RESULT_BUTTONS[current.result] ?: R.id.resultUnknown)
 
-        var date = current.date
-        dateField.setText(Pgn.parseDate(date)?.let(::formatDate))
+        // Only the day changes; the time of day of createdAt is kept
+        var createdAt = current.createdAt
+        dateField.setText(formatDate(toLocalDate(createdAt)))
         dateField.setOnClickListener {
-            pickDate(Pgn.parseDate(date)) { picked ->
-                date = Pgn.formatDate(picked)
+            pickDate(toLocalDate(createdAt)) { picked ->
+                createdAt = withDate(createdAt, picked)
                 dateField.setText(formatDate(picked))
             }
         }
@@ -240,7 +225,7 @@ class GameEditActivity : BaseActivity() {
                     GameDetails(
                         name = nameField.text.toString(),
                         site = siteField.text.toString(),
-                        date = date,
+                        createdAt = createdAt,
                         round = roundField.text.toString(),
                         result = result,
                     )
@@ -251,9 +236,8 @@ class GameEditActivity : BaseActivity() {
     }
 
     // The date picker works with midnight UTC in milliseconds, so convert from and to LocalDate
-    private fun pickDate(current: LocalDate?, onPicked: (LocalDate) -> Unit) {
-        val selection = current?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()
-            ?: MaterialDatePicker.todayInUtcMilliseconds()
+    private fun pickDate(current: LocalDate, onPicked: (LocalDate) -> Unit) {
+        val selection = current.atStartOfDay(ZoneOffset.UTC).toInstant().toEpochMilli()
         val picker = MaterialDatePicker.Builder.datePicker()
             .setTitleText(R.string.details_date)
             .setSelection(selection)

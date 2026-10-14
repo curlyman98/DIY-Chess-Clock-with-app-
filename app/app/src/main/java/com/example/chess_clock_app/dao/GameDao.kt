@@ -27,6 +27,9 @@ interface GameDao {
     @Query("SELECT * FROM games ORDER BY name ASC")
     fun getGameOrderedByName(): Flow<List<Game>>
 
+    @Query("SELECT * FROM games WHERE espMac = :mac ORDER BY createdAt ASC")
+    fun getGamesFromDevice(mac: String): Flow<List<Game>>
+
     @Query("SELECT * FROM games WHERE key = :key LIMIT 1")
     suspend fun getById(key: Int): Game?
 

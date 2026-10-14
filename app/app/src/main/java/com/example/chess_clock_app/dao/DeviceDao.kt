@@ -28,4 +28,7 @@ interface DeviceDao {
     @Query("SELECT * FROM devices WHERE mac = :mac LIMIT 1")
     suspend fun getByMac(mac: String): Device?
 
+    @Query("SELECT * FROM devices WHERE mac = :mac LIMIT 1")
+    fun observeByMac(mac: String): Flow<Device?>
+
 }

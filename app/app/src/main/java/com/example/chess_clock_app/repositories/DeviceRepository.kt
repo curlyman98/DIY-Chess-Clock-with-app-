@@ -14,11 +14,15 @@ class DeviceRepository(private val deviceDao: DeviceDao) {
     val savedDevices: Flow<List<Device>> = deviceDao.getAllDevices()
 
 
+    // The chess clock the app is talking to; null = none connected
     // TODO: set this from the ESP32 connection code once it exists
-    private val _isConnected = MutableStateFlow(false)
-    val isConnected: StateFlow<Boolean> = _isConnected.asStateFlow()
+    private val _connectedDevice = MutableStateFlow<Device?>(null)
+    val connectedDevice: StateFlow<Device?> = _connectedDevice.asStateFlow()
 
     suspend fun getDevice(mac: String): Device? = deviceDao.getByMac(mac)
+
+    // Emits again whenever the device changes (e.g. renamed); null once it is forgotten
+    fun observeDevice(mac: String): Flow<Device?> = deviceDao.observeByMac(mac)
 
     suspend fun saveDevice(device: Device) = deviceDao.insertDevice(device)
 
