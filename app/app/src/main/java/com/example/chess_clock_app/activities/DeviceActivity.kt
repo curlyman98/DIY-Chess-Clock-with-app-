@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chess_clock_app.R
 import com.example.chess_clock_app.adapters.GameAdapter
 import com.example.chess_clock_app.utils.InputLimits
+import com.example.chess_clock_app.utils.showEditDialog
 import com.example.chess_clock_app.utils.formatDateTime
 import com.example.chess_clock_app.viewmodels.DeviceViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

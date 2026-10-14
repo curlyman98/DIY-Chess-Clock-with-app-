@@ -21,6 +21,7 @@ import com.example.chess_clock_app.adapters.MoveAdapter
 import com.example.chess_clock_app.chess.PieceType
 import com.example.chess_clock_app.chess.Side
 import com.example.chess_clock_app.utils.InputLimits
+import com.example.chess_clock_app.utils.showEditDialog
 import com.example.chess_clock_app.utils.formatDate
 import com.example.chess_clock_app.utils.formatDateTime
 import com.example.chess_clock_app.utils.limitLength
