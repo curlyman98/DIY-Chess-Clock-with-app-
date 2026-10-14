@@ -14,5 +14,6 @@
         <!-- Customize your theme here. -->
         <!-- All popups use the style from values/themes.xml -->
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Chess_Clock_App.Dialog</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.Chess_Clock_App.DatePicker</item>
     </style>
 </resources>

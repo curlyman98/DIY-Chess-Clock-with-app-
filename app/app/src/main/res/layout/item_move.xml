@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- One row of the move list: number, white's move, black's move.
-     The widths match the player name pills above the list, so the moves line up under them. -->
+<!-- One row of the move list: white's move (with the move number) and black's move.
+     The two halves match the player name pills above the list, so the moves line up under them. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,14 +10,7 @@
     android:minHeight="32dp"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/moveNumber"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/text"
-        android:textSize="16sp" />
-
-    <!-- White's move and clock time -->
+    <!-- Move number, white's move and clock time -->
 
     <LinearLayout
         android:id="@+id/whiteMove"
@@ -31,6 +24,14 @@
         android:paddingTop="4dp"
         android:paddingEnd="12dp"
         android:paddingBottom="4dp">
+
+        <TextView
+            android:id="@+id/moveNumber"
+            android:layout_width="32dp"
+            android:layout_height="wrap_content"
+            android:alpha="0.6"
+            android:textColor="@color/text"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/whiteSan"

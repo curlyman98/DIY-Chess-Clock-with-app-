@@ -47,4 +47,22 @@
     <string name="rename_game">Rename game</string>
     <string name="edit_player_name">Edit player name</string>
     <string name="ok">OK</string>
+
+    <!-- Deleting a game -->
+    <string name="delete_game">Delete game</string>
+    <string name="delete_game_message">%1$s will be deleted permanently.</string>
+    <string name="delete">Delete</string>
+
+    <!-- Game details popup -->
+    <string name="edit_game_details">Edit game details</string>
+    <string name="game_details">Game details</string>
+    <string name="details_name">Name</string>
+    <string name="details_site">Site</string>
+    <string name="details_date">Date</string>
+    <string name="details_round">Round</string>
+    <string name="details_result">Result</string>
+    <string name="result_white_wins" translatable="false">1-0</string>
+    <string name="result_draw" translatable="false">½-½</string>
+    <string name="result_black_wins" translatable="false">0-1</string>
+    <string name="result_unknown">Unknown</string>
 </resources>

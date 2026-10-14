@@ -1,10 +1,12 @@
 package com.example.chess_clock_app.activities
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -19,19 +21,35 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chess_clock_app.R
 import com.example.chess_clock_app.adapters.MoveAdapter
 import com.example.chess_clock_app.chess.PieceType
+import com.example.chess_clock_app.chess.Pgn
 import com.example.chess_clock_app.chess.Side
+import com.example.chess_clock_app.utils.formatDate
 import com.example.chess_clock_app.utils.formatDateTime
 import com.example.chess_clock_app.utils.setEnabledLook
+import com.example.chess_clock_app.viewmodels.GameDetails
 import com.example.chess_clock_app.viewmodels.GameEditViewModel
 import com.example.chess_clock_app.views.ChessBoardView
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 class GameEditActivity : BaseActivity() {
 
     companion object {
         // Key of the game to open. Started without it, the screen creates a new game.
         const val EXTRA_GAME = "com.example.chess_clock_app.extra.GAME"
+
+        // Result buttons in the "Game details" popup and the PGN result each one stands for
+        private val RESULT_BUTTONS = mapOf(
+            "1-0" to R.id.resultWhiteWins,
+            "1/2-1/2" to R.id.resultDraw,
+            "0-1" to R.id.resultBlackWins,
+            "*" to R.id.resultUnknown,
+        )
     }
 
     private val viewModel: GameEditViewModel by viewModels { GameEditViewModel.Factory }
@@ -59,6 +77,8 @@ class GameEditActivity : BaseActivity() {
         }
 
         val titleText = findViewById<TextView>(R.id.gameTitle)
+        val editGameButton = findViewById<ImageButton>(R.id.editGameButton)
+        val deleteGameButton = findViewById<ImageButton>(R.id.deleteGameButton)
         val dateText = findViewById<TextView>(R.id.gameDate)
         val board = findViewById<ChessBoardView>(R.id.chessBoard)
         val whitePlayer = findViewById<TextView>(R.id.whitePlayer)
@@ -83,12 +103,10 @@ class GameEditActivity : BaseActivity() {
             }
         }
 
-        // Tapping the title or a player name opens a popup to edit it
-        titleText.setOnClickListener {
-            showEditDialog(R.string.rename_game, viewModel.uiState.value.name) { newName ->
-                viewModel.rename(newName)
-            }
-        }
+        editGameButton.setOnClickListener { showDetailsDialog() }
+        deleteGameButton.setOnClickListener { confirmDelete() }
+
+        // Tapping a player name opens a popup to edit it
         whitePlayer.setOnClickListener {
             showEditDialog(R.string.edit_player_name, viewModel.uiState.value.white) { newName ->
                 viewModel.setPlayerName(Side.WHITE, newName)
@@ -118,7 +136,7 @@ class GameEditActivity : BaseActivity() {
                     }
                     if (state.isLoading) return@collect
 
-                    titleText.text = state.name
+                    titleText.text = state.details.name
                     dateText.text = formatDateTime(state.createdAt)
                     whitePlayer.text = state.white
                     blackPlayer.text = state.black
@@ -165,12 +183,14 @@ class GameEditActivity : BaseActivity() {
 
     // Popup with a text field, filled with the current value
     private fun showEditDialog(@StringRes title: Int, currentValue: String, onDone: (String) -> Unit) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_text, null)
+        // Inflate with the popup's context, so the field uses the popup colors, not the screen's
+        val builder = MaterialAlertDialogBuilder(this)
+        val dialogView = LayoutInflater.from(builder.context).inflate(R.layout.dialog_edit_text, null)
         val editText = dialogView.findViewById<EditText>(R.id.editText)
         editText.setText(currentValue)
         editText.selectAll()
 
-        val dialog = MaterialAlertDialogBuilder(this)
+        val dialog = builder
             .setTitle(title)
             .setView(dialogView)
             .setPositiveButton(R.string.ok) { _, _ -> onDone(editText.text.toString()) }
@@ -181,6 +201,83 @@ class GameEditActivity : BaseActivity() {
         dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
         editText.requestFocus()
         dialog.show()
+    }
+
+    // Popup with the PGN header values; the players are edited through the pills instead
+    private fun showDetailsDialog() {
+        val current = viewModel.uiState.value.details
+        // Inflate with the popup's context, so the fields use the popup colors, not the screen's
+        val builder = MaterialAlertDialogBuilder(this)
+        val dialogView = LayoutInflater.from(builder.context).inflate(R.layout.dialog_game_details, null)
+        val nameField = dialogView.findViewById<EditText>(R.id.detailsName)
+        val siteField = dialogView.findViewById<EditText>(R.id.detailsSite)
+        val dateField = dialogView.findViewById<EditText>(R.id.detailsDate)
+        val roundField = dialogView.findViewById<EditText>(R.id.detailsRound)
+        val resultGroup = dialogView.findViewById<MaterialButtonToggleGroup>(R.id.detailsResult)
+
+        // "?" means unknown in PGN; shown as an empty field
+        nameField.setText(current.name)
+        siteField.setText(current.site.takeUnless { it == "?" })
+        roundField.setText(current.round.takeUnless { it == "?" })
+        resultGroup.check(RESULT_BUTTONS[current.result] ?: R.id.resultUnknown)
+
+        var date = current.date
+        dateField.setText(Pgn.parseDate(date)?.let(::formatDate))
+        dateField.setOnClickListener {
+            pickDate(Pgn.parseDate(date)) { picked ->
+                date = Pgn.formatDate(picked)
+                dateField.setText(formatDate(picked))
+            }
+        }
+
+        builder
+            .setTitle(R.string.game_details)
+            .setView(dialogView)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                val result = RESULT_BUTTONS.entries
+                    .firstOrNull { it.value == resultGroup.checkedButtonId }?.key ?: "*"
+                viewModel.updateDetails(
+                    GameDetails(
+                        name = nameField.text.toString(),
+                        site = siteField.text.toString(),
+                        date = date,
+                        round = roundField.text.toString(),
+                        result = result,
+                    )
+                )
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    // The date picker works with midnight UTC in milliseconds, so convert from and to LocalDate
+    private fun pickDate(current: LocalDate?, onPicked: (LocalDate) -> Unit) {
+        val selection = current?.atStartOfDay(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()
+            ?: MaterialDatePicker.todayInUtcMilliseconds()
+        val picker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText(R.string.details_date)
+            .setSelection(selection)
+            .build()
+        picker.addOnPositiveButtonClickListener { millis ->
+            onPicked(Instant.ofEpochMilli(millis).atZone(ZoneOffset.UTC).toLocalDate())
+        }
+        picker.show(supportFragmentManager, "datePicker")
+    }
+
+    // Asks first; also for a new game that was never saved
+    private fun confirmDelete() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.delete_game)
+            .setMessage(getString(R.string.delete_game_message, viewModel.uiState.value.details.name))
+            .setPositiveButton(R.string.delete) { _, _ ->
+                // Wait until the game is deleted, then close the screen
+                lifecycleScope.launch {
+                    viewModel.deleteGame().join()
+                    finish()
+                }
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
     }
 
     private fun askPromotionPiece(onChosen: (PieceType) -> Unit) {

@@ -14,6 +14,7 @@
         <!-- Customize your theme here. -->
 
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.Chess_Clock_App.Dialog</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.Chess_Clock_App.DatePicker</item>
     </style>
 
     <!-- Popups in the app's grey colors instead of white and purple -->
@@ -30,5 +31,15 @@
         <item name="colorControlNormal">@color/text</item>
         <item name="colorControlActivated">@color/text</item>
         <item name="colorSecondary">@color/text</item>
+    </style>
+
+    <!-- Date picker in the app's grey colors -->
+    <style name="ThemeOverlay.Chess_Clock_App.DatePicker" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <!-- Header and selected day -->
+        <item name="colorPrimary">@color/top_bar</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Background and days -->
+        <item name="colorSurface">@color/background</item>
+        <item name="colorOnSurface">@color/text</item>
     </style>
 </resources>

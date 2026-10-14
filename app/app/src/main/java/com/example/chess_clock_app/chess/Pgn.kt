@@ -1,8 +1,10 @@
 package com.example.chess_clock_app.chess
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 data class PgnGame(
     // Header tags like [White "Magnus"], in the order they are written
@@ -29,6 +31,15 @@ object Pgn {
 
     fun formatDate(millis: Long): String =
         DATE.format(Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()))
+
+    fun formatDate(date: LocalDate): String = DATE.format(date)
+
+    // "2026.10.14" -> the date; null for unknown dates like "????.??.??"
+    fun parseDate(tag: String): LocalDate? = try {
+        LocalDate.parse(tag, DATE)
+    } catch (e: DateTimeParseException) {
+        null
+    }
 
     fun parse(text: String): PgnGame {
         val tags = linkedMapOf<String, String>()

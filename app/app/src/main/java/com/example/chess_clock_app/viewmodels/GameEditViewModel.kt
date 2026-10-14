@@ -27,11 +27,21 @@ data class MoveCell(val san: String?, val clock: String?, val isCurrent: Boolean
 // One line of the move list: "1.  e4  4:58   e5  4:55"
 data class MoveRow(val number: Int, val white: MoveCell?, val black: MoveCell?)
 
+// The PGN header values edited in the "Game details" popup (the players are edited through the pills).
+// Unknown values are "?" as in PGN; the date is in PGN format, e.g. "2026.10.14".
+data class GameDetails(
+    val name: String = "",
+    val site: String = "?",
+    val date: String = "????.??.??",
+    val round: String = "?",
+    val result: String = "*",
+)
+
 // Everything the screen needs to draw itself, in one object
 data class GameEditUiState(
     val isLoading: Boolean = true,
     val notFound: Boolean = false,
-    val name: String = "",
+    val details: GameDetails = GameDetails(),
     val createdAt: Long = 0L,
     val white: String = "",
     val black: String = "",
@@ -58,7 +68,7 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
     // The parts of a game the user can change. Comparing the current version with
     // the saved one tells whether there are unsaved changes.
     private data class Edits(
-        val name: String,
+        val details: GameDetails,
         val white: String,
         val black: String,
         val sans: List<String>,
@@ -71,7 +81,7 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
     private var game: Game? = null
     private var pgn = PgnGame()
 
-    private var name = ""
+    private var details = GameDetails()
     private var white = ""
     private var black = ""
 
@@ -146,9 +156,15 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
         }
     }
 
-    fun rename(newName: String) {
-        if (newName.isBlank()) return
-        name = newName.trim()
+    // From the "Game details" popup. An empty name keeps the old one; other empty fields become "?"
+    fun updateDetails(newDetails: GameDetails) {
+        details = GameDetails(
+            name = newDetails.name.trim().ifEmpty { details.name },
+            site = newDetails.site.trim().ifEmpty { "?" },
+            date = newDetails.date,
+            round = newDetails.round.trim().ifEmpty { "?" },
+            result = newDetails.result,
+        )
         publish()
     }
 
@@ -165,9 +181,17 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
         val edits = currentEdits()
         pgn = pgn.copy(
             sans = edits.sans,
-            tags = pgn.tags + mapOf("Event" to name, "White" to white, "Black" to black),
+            result = details.result,
+            tags = pgn.tags + mapOf(
+                "Event" to details.name,
+                "Site" to details.site,
+                "Date" to details.date,
+                "Round" to details.round,
+                "White" to white,
+                "Black" to black,
+            ),
         )
-        game = current.copy(name = name, pgn = Pgn.write(pgn))
+        game = current.copy(name = details.name, pgn = Pgn.write(pgn))
         saved = edits
         publish()
 
@@ -190,24 +214,33 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
 
     fun discardChanges() {
         val edits = saved ?: return
-        name = edits.name
+        details = edits.details
         white = edits.white
         black = edits.black
         replay(edits.sans)
         publish()
     }
 
-    fun deleteGame() {
-        val current = game ?: return
-        if (current.key == 0) return
-        viewModelScope.launch { repository.deleteGame(current) }
+    // Returns the database delete, so the caller can wait for it before closing the screen
+    fun deleteGame(): Job = viewModelScope.launch {
+        // A save that is still running could otherwise insert the game again after the delete
+        saveJob?.join()
+        val current = game ?: return@launch
+        // key 0: never saved, so there is nothing in the database to delete
+        if (current.key != 0) repository.deleteGame(current)
     }
 
     private fun start(loaded: Game) {
         game = loaded
         // Games without the standard header get it here; it is written on the next save
         pgn = GameDefaults.withDefaultTags(Pgn.parse(loaded.pgn), loaded.name, loaded.createdAt)
-        name = loaded.name
+        details = GameDetails(
+            name = loaded.name,
+            site = pgn.tags["Site"] ?: "?",
+            date = pgn.tags["Date"] ?: "????.??.??",
+            round = pgn.tags["Round"] ?: "?",
+            result = pgn.result,
+        )
         white = pgn.tags["White"] ?: GameDefaults.UNKNOWN_PLAYER
         black = pgn.tags["Black"] ?: GameDefaults.UNKNOWN_PLAYER
         replay(pgn.sans)
@@ -231,7 +264,7 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
         }
     }
 
-    private fun currentEdits() = Edits(name, white, black, sans.toList())
+    private fun currentEdits() = Edits(details, white, black, sans.toList())
 
     // Two half-moves per row; a row exists as soon as there is a move or a clock time for it
     private fun moveRows(): List<MoveRow> {
@@ -252,7 +285,7 @@ class GameEditViewModel(private val repository: GameRepository) : ViewModel() {
         val current = game ?: return
         _uiState.value = GameEditUiState(
             isLoading = false,
-            name = name,
+            details = details,
             createdAt = current.createdAt,
             white = white,
             black = black,
