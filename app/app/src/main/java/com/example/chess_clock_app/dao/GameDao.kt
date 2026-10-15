@@ -24,7 +24,7 @@ interface GameDao {
     @Query("SELECT * FROM games ORDER BY createdAt ASC")
     fun getGameOrderedByCreatedAt(): Flow<List<Game>>
 
-    @Query("SELECT * FROM games ORDER BY name ASC")
+    @Query("SELECT * FROM games ORDER BY name COLLATE NOCASE ASC")
     fun getGameOrderedByName(): Flow<List<Game>>
 
     @Query("SELECT * FROM games WHERE espMac = :mac ORDER BY createdAt ASC")
@@ -32,6 +32,9 @@ interface GameDao {
 
     @Query("SELECT * FROM games WHERE key = :key LIMIT 1")
     suspend fun getById(key: Int): Game?
+
+    @Query("SELECT * FROM games WHERE espMac = :mac AND espGameId = :espGameId LIMIT 1")
+    suspend fun getFromClock(mac: String, espGameId: Int): Game?
 
 }
 

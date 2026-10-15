@@ -19,6 +19,7 @@
     <color name="list_item_pressed">#555555</color>
     <color name="list_item_background">#777777</color>
     <color name="list_item_border">#010101</color>
+    <color name="list_item_connected">#6F8A6F</color>
 
     <color name="current_move">#5AFFEB3B</color>
 

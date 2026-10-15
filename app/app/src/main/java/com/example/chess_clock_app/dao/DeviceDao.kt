@@ -31,4 +31,13 @@ interface DeviceDao {
     @Query("SELECT * FROM devices WHERE mac = :mac LIMIT 1")
     fun observeByMac(mac: String): Flow<Device?>
 
+    @Query("UPDATE devices SET lastConnectedAt = :time WHERE mac = :mac")
+    suspend fun setLastConnected(mac: String, time: Long)
+
+    @Query("UPDATE devices SET lastSyncedAt = :time WHERE mac = :mac")
+    suspend fun setLastSynced(mac: String, time: Long)
+
+    @Query("UPDATE devices SET gamesOnClock = :games WHERE mac = :mac")
+    suspend fun setGamesOnClock(mac: String, games: Int)
+
 }

@@ -3,6 +3,7 @@ package com.example.chess_clock_app.models
 import com.example.chess_clock_app.chess.Pgn
 import com.example.chess_clock_app.chess.PgnGame
 import com.example.chess_clock_app.utils.formatDateTime
+import java.util.Locale
 
 // What a game looks like before the user changes anything. Used for games created with
 // "Add game" and, later, for games synced from the ESP32.
@@ -14,6 +15,31 @@ object GameDefaults {
     const val UNKNOWN_PLAYER = "Unknown GM"
 
     fun name(createdAt: Long) = "Game Created on ${formatDateTime(createdAt)}"
+
+    // The id keeps games from the same sync apart
+    fun syncedName(espGameId: Int, createdAt: Long) = "Game $espGameId Synced on ${formatDateTime(createdAt)}"
+
+    //turns 10ms into empty moves
+    // null if the data is not a list of numbers
+    fun fromClock(data: String, mac: String, espGameId: Int, createdAt: Long): Game? {
+        val ticks = data.split(" ").filter { it.isNotEmpty() }.map { it.toIntOrNull() ?: return null }
+
+        val name = syncedName(espGameId, createdAt)
+        val pgn = withDefaultTags(PgnGame(clocks = ticks.map(::formatClock)), name, createdAt)
+        return Game(
+            pgn = Pgn.write(pgn),
+            name = name,
+            espMac = mac,
+            espGameId = espGameId,
+            createdAt = createdAt,
+        )
+    }
+
+    // 29850 ticks of 10ms -> "0:04:58", the format of {[%clk ...]}
+    private fun formatClock(ticks: Int): String {
+        val seconds = ticks / 100
+        return String.format(Locale.ROOT, "%d:%02d:%02d", seconds / 3600, seconds / 60 % 60, seconds % 60)
+    }
 
     // Not saved yet: key = 0 until it is inserted into the database
     fun newGame(createdAt: Long = System.currentTimeMillis()): Game {

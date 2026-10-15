@@ -11,4 +11,6 @@ data class Device(
     // In milliseconds since 1970; null = never
     val lastConnectedAt: Long? = null,
     val lastSyncedAt: Long? = null,
+
+    val gamesOnClock: Int? = null,
 )

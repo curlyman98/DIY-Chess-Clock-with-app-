@@ -12,8 +12,11 @@ import com.example.chess_clock_app.models.Device
 class DeviceAdapter(
     private val devices: List<Device>,
     private val onDeviceClicked: (Device) -> Unit,
-    private val onDeviceSettingsClicked: (Device) -> Unit
-) : RecyclerView.Adapter<DeviceAdapter.ViewHolder>() {
+    // null = no edit button, e.g. for nearby devices that are not paired yet
+    private val onDeviceSettingsClicked: ((Device) -> Unit)? = null,
+    // Drawn in a different colour; null = none connected
+    private val connectedMac: String? = null,
+): RecyclerView.Adapter<DeviceAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -43,12 +46,21 @@ class DeviceAdapter(
 
         holder.deviceName.text = device.name
 
+        holder.itemView.setBackgroundResource(
+            if (device.mac == connectedMac) R.drawable.device_item_connected_background
+            else R.drawable.device_item_background
+        )
+
         holder.itemView.setOnClickListener {
             onDeviceClicked(device)
         }
 
+        // remove the edit button from the pairing devices
+        holder.settingsButton.visibility =
+            if (onDeviceSettingsClicked != null) View.VISIBLE else View.GONE
+
         holder.settingsButton.setOnClickListener {
-            onDeviceSettingsClicked(device)
+            onDeviceSettingsClicked?.invoke(device)
         }
     }
 

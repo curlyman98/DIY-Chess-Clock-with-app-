@@ -95,6 +95,18 @@
         app:layout_constraintStart_toStartOf="@id/deviceTitle"
         app:layout_constraintTop_toBottomOf="@id/lastConnected" />
 
+    <!-- Games waiting on the clock, as of the last connection -->
+
+    <TextView
+        android:id="@+id/gamesOnClock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/text"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/deviceTitle"
+        app:layout_constraintTop_toBottomOf="@id/lastSynced" />
+
     <!-- Imported games heading -->
 
     <TextView
@@ -108,7 +120,7 @@
         android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lastSynced" />
+        app:layout_constraintTop_toBottomOf="@id/gamesOnClock" />
 
     <!-- Games imported from this device; tapping one opens it -->
 
@@ -122,7 +134,7 @@
         android:layout_marginBottom="8dp"
         android:clipToPadding="false"
         android:paddingBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/syncingIndicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/deviceGamesTitle" />
@@ -140,5 +152,33 @@
         app:layout_constraintEnd_toEndOf="@id/deviceGamesRecyclerView"
         app:layout_constraintStart_toStartOf="@id/deviceGamesRecyclerView"
         app:layout_constraintTop_toTopOf="@id/deviceGamesRecyclerView" />
+
+
+    <!-- Loading animation -->
+
+    <ProgressBar
+        android:id="@+id/syncingIndicator"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/syncButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Only enabled while this clock is connected -->
+
+    <Button
+        android:id="@+id/syncButton"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:backgroundTint="@color/list_item_background"
+        android:text="@string/sync"
+        android:textColor="@color/text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

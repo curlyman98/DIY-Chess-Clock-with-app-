@@ -31,7 +31,7 @@
     <string name="previous_move">Previous move</string>
     <string name="next_move">Next move</string>
     <string name="save">Save</string>
-    <string name="moves_saved">Moves saved</string>
+    <string name="moves_saved">Game saved</string>
     <string name="discard">Discard</string>
     <string name="cancel">Cancel</string>
     <string name="unsaved_changes_title">Unsaved changes</string>
@@ -72,7 +72,9 @@
     <string name="connected_to">Connected to %1$s</string>
 
     <!-- Stored games -->
-    <string name="opening_game">Opening game %1$s</string>
+    <string name="change_sort">Change sort order</string>
+    <string name="sorted_by_date">Sorted by date</string>
+    <string name="sorted_by_name">Sorted by name</string>
 
     <!-- Device screen -->
     <string name="rename_device">Rename device</string>
@@ -84,6 +86,23 @@
     <string name="last_connected">Last connected: %1$s</string>
     <string name="last_synced">Last synced: %1$s</string>
     <string name="never">Never</string>
+    <string name="games_on_clock">Games on the clock: %1$s</string>
+    <string name="unknown">Unknown</string>
     <string name="device_games">Games from this device</string>
     <string name="no_device_games">No games imported from this device yet</string>
+
+    <!-- Bluetooth -->
+    <string name="bluetooth_permission_needed">Bluetooth permission is needed to find and connect to the chess clock</string>
+    <string name="no_bluetooth">This phone has no Bluetooth</string>
+    <string name="pairing_with">Pairing with %1$s…</string>
+    <string name="pairing_failed">Could not pair with %1$s</string>
+    <string name="connecting_to">Connecting to %1$s…</string>
+    <string name="connected_games">Connected to %1$s, games on the clock: %2$d</string>
+    <string name="connect_failed">Could not connect to %1$s</string>
+    <string name="disconnected_from">Disconnected from %1$s</string>
+
+    <!-- Sync -->
+    <string name="sync_done">Games imported: %1$d</string>
+    <string name="sync_done_with_errors">Games imported: %1$d, could not be read: %2$d</string>
+    <string name="sync_failed">Sync failed, the connection to the clock was lost</string>
 </resources>

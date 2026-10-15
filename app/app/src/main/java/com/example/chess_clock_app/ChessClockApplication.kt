@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.chess_clock_app.bluetooth.ClockConnection
+import com.example.chess_clock_app.bluetooth.ClockScanner
 import com.example.chess_clock_app.databases.ChessClockDatabase
 import com.example.chess_clock_app.repositories.DeviceRepository
 import com.example.chess_clock_app.repositories.GameRepository
+import com.example.chess_clock_app.repositories.SyncRepository
 
 // shared by the whole app.
 class ChessClockApplication : Application() {
@@ -14,15 +17,18 @@ class ChessClockApplication : Application() {
     // `by lazy`: built on first use, only once, thread-safe
     val database by lazy {
         Room.databaseBuilder(this, ChessClockDatabase::class.java, "chess_clock_db")
-            .addCallback(seedTestData) // TODO: remove once games come from the ESP32
+            //.addCallback(seedTestData) // TODO: remove once games come from the ESP32
 
             //TODO Remove before final version, this formats the db upon structure change
             .fallbackToDestructiveMigration(dropAllTables = true)
 
             .build()
     }
-    val deviceRepository by lazy { DeviceRepository(database.deviceDao()) }
-    val gameRepository by lazy { GameRepository(database.gameDao()) }
+    val clockConnection by lazy { ClockConnection(this) }
+
+    val deviceRepository by lazy { DeviceRepository(database.deviceDao(), ClockScanner(this), clockConnection) }
+    val gameRepository by lazy { GameRepository(database.gameDao(), clockConnection) }
+    val syncRepository by lazy { SyncRepository(gameRepository, deviceRepository) }
 
     // Runs when the database is first created on the device, and again when it is wiped
     // because the version changed. To re-seed otherwise, uninstall the app or clear its storage.

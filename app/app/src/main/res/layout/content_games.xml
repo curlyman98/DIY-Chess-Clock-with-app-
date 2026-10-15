@@ -23,6 +23,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Switches between date and name sort; shows the current one -->
+
+    <ImageButton
+        android:id="@+id/sortButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/change_sort"
+        android:padding="12dp"
+        android:src="@drawable/ic_sort_by_date"
+        app:tint="@color/text"
+        app:layout_constraintBottom_toBottomOf="@id/titleText"
+        app:layout_constraintStart_toEndOf="@id/titleText"
+        app:layout_constraintTop_toTopOf="@id/titleText" />
+
     <!-- Available games -->
 
     <androidx.recyclerview.widget.RecyclerView

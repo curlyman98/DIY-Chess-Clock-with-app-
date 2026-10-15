@@ -10,16 +10,20 @@ import com.example.chess_clock_app.models.Device
 import com.example.chess_clock_app.models.Game
 import com.example.chess_clock_app.repositories.DeviceRepository
 import com.example.chess_clock_app.repositories.GameRepository
+import com.example.chess_clock_app.repositories.SyncRepository
 import com.example.chess_clock_app.utils.InputLimits
+import com.example.chess_clock_app.utils.UiMessage
 import com.example.chess_clock_app.utils.cleanInput
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -35,10 +39,25 @@ data class DeviceUiState(
 class DeviceViewModel(
     private val deviceRepository: DeviceRepository,
     gameRepository: GameRepository,
+    private val syncRepository: SyncRepository,
 ) : ViewModel() {
 
     // MAC of the device shown; null until loadDevice is called
     private val mac = MutableStateFlow<String?>(null)
+
+    // Sync only works while this clock is the connected one
+    val isConnected: StateFlow<Boolean> = combine(mac, deviceRepository.connectedDevice) { mac, connected ->
+        mac != null && connected?.mac == mac
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    val isSyncing: StateFlow<Boolean> = syncRepository.isSyncing
+
+    // "Games imported: 2" etc.
+    val messages: Flow<UiMessage> = syncRepository.results.map { it.toMessage() }
+
+    fun sync() = syncRepository.start()
+
+    fun cancelSync() = syncRepository.cancel()
 
     // Re-runs whenever the device or its games change in the database
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -81,7 +100,7 @@ class DeviceViewModel(
         val Factory = viewModelFactory {
             initializer {
                 val app = this[APPLICATION_KEY] as ChessClockApplication
-                DeviceViewModel(app.deviceRepository, app.gameRepository)
+                DeviceViewModel(app.deviceRepository, app.gameRepository, app.syncRepository)
             }
         }
     }

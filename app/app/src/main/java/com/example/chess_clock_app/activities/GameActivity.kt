@@ -9,6 +9,7 @@ import com.example.chess_clock_app.models.Game
 import android.widget.Toast
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.content.Intent
 import androidx.activity.viewModels
@@ -16,7 +17,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.chess_clock_app.utils.setEnabledLook
+import com.example.chess_clock_app.utils.showMessage
 import com.example.chess_clock_app.viewmodels.GameListViewModel
+import com.example.chess_clock_app.viewmodels.GameSortOrder
 import kotlinx.coroutines.launch
 //import android.widget.TextView
 
@@ -46,6 +49,26 @@ class GameActivity : BaseActivity() {
             }
         }
 
+        // Shows the current sort: calendar = by date, A-Z = by name
+        val sortButton =
+            findViewById<ImageButton>(R.id.sortButton)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sortOrder.collect { order ->
+                    sortButton.setImageResource(
+                        if (order == GameSortOrder.NAME) R.drawable.ic_sort_by_alpha else R.drawable.ic_sort_by_date
+                    )
+                }
+            }
+        }
+
+        sortButton.setOnClickListener {
+            viewModel.toggleSortOrder()
+            val text = if (viewModel.sortOrder.value == GameSortOrder.NAME) R.string.sorted_by_name else R.string.sorted_by_date
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+        }
+
         val syncButton =
             findViewById<Button>(R.id.syncButton)
 
@@ -69,18 +92,24 @@ class GameActivity : BaseActivity() {
             startActivity(Intent(this, GameEditActivity::class.java))
         }
 
-        var isSyncing = false
         syncButton.setOnClickListener {
+            if (viewModel.isSyncing.value) viewModel.cancelSync() else viewModel.sync()
+        }
 
-            isSyncing = !isSyncing
+        // Spinner and button text follow the sync, also when it ends by itself
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isSyncing.collect { syncing ->
+                    scanningIndicator.visibility = if (syncing) View.VISIBLE else View.GONE
+                    syncButton.text = getString(if (syncing) R.string.cancel_sync else R.string.sync)
+                }
+            }
+        }
 
-            if (isSyncing) {
-                scanningIndicator.visibility = View.VISIBLE
-
-                syncButton.text = getString(R.string.cancel_sync)
-            } else {
-                scanningIndicator.visibility = View.GONE
-                syncButton.text = getString(R.string.sync)
+        // "Games imported: 2" etc.
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.messages.collect { showMessage(it) }
             }
         }
 
@@ -91,11 +120,6 @@ class GameActivity : BaseActivity() {
             games = games,
 
             onGameClicked = { games ->
-                Toast.makeText(
-                    this,
-                    getString(R.string.opening_game, games.name),
-                    Toast.LENGTH_SHORT
-                ).show()
                 val intent = Intent(this, GameEditActivity::class.java)
 
                 intent.putExtra(GameEditActivity.EXTRA_GAME, games.key)
